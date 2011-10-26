@@ -36,6 +36,9 @@ interface
 	(*
 	 * @brief Rotates a vector 90 degrees counter-clockwise (=ccw)
 	 * @param vec The vector
+	 * @note If I'm not mistaken this assumes a coordinate system where
+	 *       the Y axis is 90° CW from the X axis, otherwise it's a
+	 *       clockwise rotation. (In my case: X = right, Y = down)
 	 *)
 	procedure rotate90DegCCW(var vec : TVector2i);
 	
@@ -57,8 +60,8 @@ implementation
 	begin
 		(* look up rotation matrices for an explanation for why this
 		 * rotates a vector. *)
-		newX := -vec.y;
-		vec.y := vec.x;
+		newX := vec.y;
+		vec.y := -vec.x;
 		vec.x := newX;
 	end;
 
