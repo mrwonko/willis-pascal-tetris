@@ -1,3 +1,12 @@
+(* @file UKeyConstants.pas
+ * @author Willi Schinmeyer
+ * @date 2011-10-24
+ * 
+ * UKeyConstants Unit
+ * 
+ * Defines constants for keyboard key ASCII codes as returned by
+ * readkey. *)
+
 unit UKeyConstants;
 
 interface

@@ -2,7 +2,10 @@
  * @author Willi Schinmeyer
  * @date 2011-10-24
  * 
- * Functions for dealing with time. *)
+ * UTime Unit
+ * 
+ * Functions for dealing with time.
+ *)
 
 Unit UTime;
 
