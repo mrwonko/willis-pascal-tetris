@@ -28,10 +28,10 @@ interface
 	 * @param lhs (left hand side) first vector
 	 * @param rhs (right hand side) second vector
 	 * @return Sum of the two vectors. (i.e. (a.x + b.x, a.y + b.y) )
-	 * @note The parameters are vars so they don't get copied (costly),
-	 *       not because they get changed. (They don't!)
+	 * @note The parameters are no vars although that would be cheaper
+	 *       (no copies) so temporary values can be used.
 	 *)
-	function vec2iAdd(var lhs, rhs : TVector2i) : TVector2i;
+	operator + (lhs, rhs : TVector2i) result : TVector2i;
 	
 	(*
 	 * @brief Rotates a vector 90 degrees counter-clockwise (=ccw)
@@ -40,29 +40,44 @@ interface
 	 *       the Y axis is 90° CW from the X axis, otherwise it's a
 	 *       clockwise rotation. (In my case: X = right, Y = down)
 	 *)
-	procedure vec2iRotate90DegCCW(var vec : TVector2i);
+	procedure rotate90DegCCW(var self : TVector2i);
+	
+	(* 
+	 * @brief Creates a new Vector (especially useful for temporary
+	 *        records)
+	 * 
+	 * @param x X coordinate
+	 * @param y Y coordinate
+	 *)
+	function new(x, y : integer) : TVector2i;
 	
 implementation
-	function vec2iAdd(var lhs, rhs : TVector2i) : TVector2i;
-	var
-		result : TVector2i;
+	operator +(lhs, rhs : TVector2i) result : TVector2i;
 	begin
 		(* Vector's are added component-wise. That's how it's defined.*)
 		result.x := lhs.x + rhs.x;
 		result.y := lhs.y + rhs.y;
-		vec2iAdd := result;
 	end;
 	
-	procedure vec2iRotate90DegCCW(var vec : TVector2i);
+	procedure rotate90DegCCW(var self : TVector2i);
 	var
 		(* to switch the values I need a temporary value. *)
 		newX : integer;
 	begin
 		(* look up rotation matrices for an explanation for why this
 		 * rotates a vector. *)
-		newX := vec.y;
-		vec.y := -vec.x;
-		vec.x := newX;
+		newX := self.y;
+		self.y := -self.x;
+		self.x := newX;
+	end;
+	
+	function new(x, y : integer) : TVector2i;
+	var
+		tempVec : TVector2i;
+	begin
+		tempVec.x := x;
+		tempVec.y := y;
+		new := tempVec;
 	end;
 
 	begin
