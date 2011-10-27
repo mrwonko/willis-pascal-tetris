@@ -16,23 +16,24 @@ interface
 	(*
 	 * @brief draws 4 borders, creating a rectangle
 	 * 
-	 * @param upperLeft Vector of upper left point (X+ = right, Y+ = 
-	 * down)
-	 * @param lowerRight Vector of lower right point
+	 * point1 and point2 are the opposite points defining the rectangle.
 	 *)
-	procedure drawRectangleBorders(upperLeft, lowerRight : 
+	procedure drawRectangleBorders(point1, point2 : 
 	                               TVector2i);
 	
 	(*
-	 * @brief Returns one of the colors defined in UGeneralConstants.pas
+	 * @brief Returns one of the colors defined in UGameplayConstants
 	 *)
-	function getRandomColor() : byte;
+	function getRandomTetrominoColor() : byte;
+	
+	(* @brief Swaps the content of a and b *)
+	procedure swap(var a, b : integer);
 
 implementation
 
-	uses crt, UGeneralConstants;
+	uses crt, UGameplayConstants;
 
-	procedure drawRectangleBorders(upperLeft, lowerRight : 
+	procedure drawRectangleBorders(point1, point2 : 
 	                               TVector2i);
 	                               
 		(* @brief helper function for drawing a horizontal line like
@@ -42,7 +43,7 @@ implementation
 			i : integer;
 		begin
 			write('+');
-			for i:= upperLeft.x + 1 to lowerRight.x - 1 do
+			for i:= point1.x + 1 to point2.x - 1 do
 			begin
 				write('-');
 			end;
@@ -52,32 +53,47 @@ implementation
 	var
 		y : integer;
 	begin
+		(* make sure point1 is upperLeft and point2 lowerRight *)
+		if point1.x > point2.x then
+			swap(point1.x, point2.x);
+		if point1.y > point2.y then
+			swap(point1.y, point2.y);
 		(* draw the upper border including corners *)
-		gotoxy(upperLeft.x, upperLeft.y);
+		gotoxy(point1.x, point1.y);
 		drawHorizontalLine();
 		(* draw vertical borders, i.e. for every line do: *)
-		for y := upperLeft.y + 1 to lowerRight.y - 1 do
+		for y := point1.y + 1 to point2.y - 1 do
 		begin
 			(* draw left border segment *)
-			gotoxy(upperLeft.x, y);
+			gotoxy(point1.x, y);
 			write('|');
 			(* draw right border segment *)
-			gotoxy(lowerRight.x, y);
+			gotoxy(point2.x, y);
 			write('|');
 		end;
 		(* draw lower border including corners *)
-		gotoxy(upperLeft.x, lowerRight.y);
+		gotoxy(point1.x, point2.y);
 		drawHorizontalLine();
 	end;
 	
-	function getRandomColor() : byte;
+	function getRandomTetrominoColor() : byte;
 	begin
 		//random(i) returns a random number in range [0, i[
 		//I want one in range [low, high]
 		//so I add low to random(high-low+1)
-		getRandomColor := COLORS[low(COLORS) + 
-		                         random(high(colors) - low(colors) + 1)
-		                        ];
+		getRandomTetrominoColor := TETROMINO_COLORS[
+			low(TETROMINO_COLORS) + 
+			random(high(TETROMINO_COLORS) - low(TETROMINO_COLORS) + 1)
+		];
+	end;
+	
+	procedure swap(var a, b : integer);
+	var
+		temp : integer;
+	begin
+		temp := a;
+		a := b;
+		b := temp;
 	end;
 	
 	begin

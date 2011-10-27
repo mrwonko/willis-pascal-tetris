@@ -16,8 +16,6 @@ interface
 		(* Window size in characters *)
 		SCREEN_WIDTH : integer = 80;
 		SCREEN_HEIGHT : integer = 50;
-		
-		COLORS : array[0..3] of byte = (red, green, blue, yellow);
 
 implementation
 

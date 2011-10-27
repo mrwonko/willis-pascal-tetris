@@ -64,5 +64,5 @@ begin
 	end;
 	//cursor could be anywhere, move it and clear screen
 	gotoxy(1, 1);
-	clrscr;
+	clrscr();
 end.
