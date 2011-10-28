@@ -23,98 +23,34 @@ interface
 	
 implementation
 
-	uses crt, UGeneralConstants, UHelpers, UVector2i;
-
-	const
-		
-		// = numLines + offset*2
-		// numLines = 4, offset = 2
-		TITLE_HEIGHT : integer = 8;
-		// (TITLE_WIDTH = MENU_WIDTH)
-		
-		// = longestLine + offset*2
-		// offset = 2, longestLine = 18 (YET ANOTHER TETRIS)
-		MENU_WIDTH : integer = 22;
-		
-		// = numLines + offset*2
-		// offset = 2, numLines = 2
-		MENU_HEIGHT : integer = 6;
-		
-		// = space (1) + borderSize (1)
-		MENU_TEXT_OFFSET : integer = 2;
-	
-	procedure drawMainMenu();
-	var
-		(* border points of the menu rectangles - cannot be constants
-		 * since those can't be initialized from expressions -.- *)
-		menuUpperLeft,
-		menuMiddleRight,
-		menuLowerLeft : TVector2i;
-		// current y position of menu entries
-		currentTextPosY : integer;
-		
-		(* \brief Writes a menu text left aligned *)
-		procedure writeMenuLine(text : string);
-		begin
-			gotoxy(menuUpperLeft.x + MENU_TEXT_OFFSET, currentTextPosY);
-			write(text);
-			inc(currentTextPosY);
-		end;
-		
-		(* \brief Writes a menu text centered *)
-		procedure writeCenteredMenuLine(text : string);
-		begin
-			//since the offset is on both sides, I can ignore it
-			gotoxy(menuUpperLeft.x +
-			       round((MENU_WIDTH - length(text)) / 2),
-			       currentTextPosY);
-			write(text);
-			inc(currentTextPosY);
-		end;
-	begin
-		//calculate menu position
-		menuUpperLeft.x := round((SCREEN_WIDTH - MENU_WIDTH) / 2);
-		menuUpperLeft.y := round((SCREEN_HEIGHT - MENU_HEIGHT -
-		                          TITLE_HEIGHT) / 2);
-		//assertion: x > 0 and y > 0
-		
-		menuMiddleRight.x := menuUpperLeft.x + MENU_WIDTH - 1;
-		menuMiddleRight.y := menuUpperLeft.y + TITLE_HEIGHT - 1;
-		
-		menuLowerLeft.x := menuUpperLeft.x;
-		menuLowerLeft.y := menuMiddleRight.y + MENU_HEIGHT - 1;
-		
-		//clear screen
-		clrscr();
-		
-		//reset color in case it's been changed earlier
-		textColor(white);
-		                               
-		//draw top border
-		UHelpers.drawRectangleBorders(menuUpperLeft, menuMiddleRight);
-		//draw bottom border
-		UHelpers.drawRectangleBorders(menuLowerLeft, menuMiddleRight);
-		
-		//set current text Y position to in title rect
-		currentTextPosY := menuUpperLeft.y + MENU_TEXT_OFFSET;
-		
-		//draw title / author (me!)
-		writeCenteredMenuLine('YET ANOTHER TETRIS');
-		writeMenuLine(''); //empty line
-		writeCenteredMenuLine('by Willi');
-		writeCenteredMenuLine('Schinmeyer');
-		
-		//set current text Y position to in main rect
-		currentTextPosY := menuMiddleRight.y + MENU_TEXT_OFFSET;
-		
-		writeMenuLine('S   - Start Game');
-		writeMenuLine('ESC - Quit');
-	end;
+	uses UMenu, UMenuLine, crt;
 
 	function main(var sharedData : TSharedData) : TGameState;
+	var
+		menu : TMenu;
+		//menu definition
+		title : array [0..3] of TMenuLine =
+		(
+			(text: 'YET ANOTHER TETRIS'; centered : true),
+			(text: ''; centered : true), //empty line
+			(text: 'by Willi'; centered : true),
+			(text: 'Schinmeyer'; centered : true)
+		);
+		content : array[0..1] of TMenuLine =
+		(
+			(text: 'S   - Start Game'; centered : false),
+			(text: 'ESC - Quit'; centered : false)
+		);
 	begin
-		drawMainMenu();
-		gotoxy(1, 1); //move cursor outside of menu because it blinks
+		//initialize menu...
+		UMenu.init(menu, title, content);
+		//... and draw it
+		UMenu.draw(menu);
+		
+		//move cursor outside of menu because it blinks
+		gotoxy(1, 1);
+		
+		//prepare loop
 		main := stateMainMenu;
 		// "main loop" - repeatedly poll input and handle it.
 		repeat

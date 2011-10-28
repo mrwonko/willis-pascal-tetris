@@ -34,6 +34,16 @@ interface
 	operator + (lhs, rhs : TVector2i) result : TVector2i;
 	
 	(*
+	 * @brief Subtracts two vectors and returns the result.
+	 * @param lhs (left hand side) first vector
+	 * @param rhs (right hand side) second vector
+	 * @return Difference of the two vectors.
+	 * @note The parameters are no vars although that would be cheaper
+	 *       (no copies) so temporary values can be used.
+	 *)
+	operator - (lhs, rhs : TVector2i) result : TVector2i;
+	
+	(*
 	 * @brief Rotates a vector 90 degrees counter-clockwise (=ccw)
 	 * @param vec The vector
 	 * @note If I'm not mistaken this assumes a coordinate system where
@@ -57,6 +67,13 @@ implementation
 		(* Vector's are added component-wise. That's how it's defined.*)
 		result.x := lhs.x + rhs.x;
 		result.y := lhs.y + rhs.y;
+	end;
+	
+	operator -(lhs, rhs : TVector2i) result : TVector2i;
+	begin
+		(* subtract correctly *)
+		result.x := lhs.x - rhs.x;
+		result.y := lhs.y - rhs.y;
 	end;
 	
 	procedure rotate90DegCCW(var self : TVector2i);

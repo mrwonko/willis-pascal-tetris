@@ -9,7 +9,19 @@
 
 program Tetris;
 
-uses UGeneralTypes, USharedData, UMainMenu, UIngame, UGameOver, UGeneralConstants, crt;
+uses
+	//contains game state type
+	UGeneralTypes,
+	//data shared between states
+	USharedData,
+	//the different states
+	UMainMenu,
+	UIngame,
+	UGameOver,
+	//contains screen size constants
+	UGeneralConstants,
+	//for console i/o
+	crt;
 
 var
 	(* This represents the game's current state. Starts in Main Menu. *)
@@ -19,7 +31,7 @@ var
 	 * game over) *)
 	sharedData : TSharedData;
 begin
-	//set window size
+	//set window size - we just assume this is right.
 	window(1, 1, SCREEN_WIDTH, SCREEN_HEIGHT);
 	while currentState <> stateQuit do
 	begin

@@ -7,20 +7,25 @@
  * Contains various tests.
  *)
 
-procedure writeLines(var lines : array of string);
-var
-	i : integer;
-	dynArray : array of string;
+uses crt;
+
+type
+	TTest = record
+		value : integer;
+	end;
+
+operator +(a, b : TTest) result : TTest;
 begin
-	dynArray := lines;
-	for i := low(dynArray) to high(dynArray) do
-		writeln(dynArray[i]);
+	result.value := a.value + b.value;
+	while result.value > 9 do
+		result.value := result.value - 10;
 end;
 
 var
-	lines : array[0..3] of string = ('hello,', 'beautiful', 'array', 'world!');
-	nolines : array of string;
+	a, b, c : TTesT;
 begin
-	writeLines(lines);
-	//writeLines(nolines);
+	a.value := 9;
+	b.value := 1;
+	c := a + b;
+	writeln(c.value);
 end.
