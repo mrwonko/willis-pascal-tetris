@@ -76,7 +76,9 @@ implementation
 	procedure draw(var self : TMenu);
 	begin
 		//clear screen
-		clrscr;
+		crt.clrscr;
+		//set color - better safe than sorry
+		crt.textcolor(WHITE);
 		//draw head
 		UMenuPart.draw(self._head, self._position, self._width);
 		//draw body at correct offset - none at X, obviously, while Y

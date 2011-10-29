@@ -5,6 +5,15 @@
  * Tetris Program
  *
  * Contains the "main function" of the Tetris game.
+ * 
+ * @note I could've used crt.window a couple of times, which effectively
+ *       makes me draw only to a certain part of the console. However
+ *       the Free Pascal documentation describes it as opening a new
+ *       window, which is open enough for interpretation for me to not
+ *       rely on it since its behaviour may be different on other
+ *       platforms. (Unlikely, but possible?)
+ *       That, and I didn't find out about it until pretty late into the
+ *       project.
  *)
 
 program Tetris;

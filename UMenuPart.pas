@@ -53,9 +53,6 @@ implementation
 	const
 		//how far away from the borders the text is
 		PADDING : integer = 1;
-		//how wide the borders are - changing this does not change the
-		//borders, it just messes the calculation up.
-		BORDER_SIZE : integer = 1;
 
 
 

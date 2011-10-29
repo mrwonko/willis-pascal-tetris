@@ -7,25 +7,15 @@
  * Contains various tests.
  *)
 
-uses crt;
-
-type
-	TTest = record
-		value : integer;
-	end;
-
-operator +(a, b : TTest) result : TTest;
-begin
-	result.value := a.value + b.value;
-	while result.value > 9 do
-		result.value := result.value - 10;
-end;
+uses crt, UVector2i;
 
 var
-	a, b, c : TTesT;
+	arr : array[0..0] of TVector2i = ((x:1;y:1));
+	vec : TVector2i;
 begin
-	a.value := 9;
-	b.value := 1;
-	c := a + b;
-	writeln(c.value);
+	for vec in arr do
+		UVector2i.rotate90DegCCW(vec); //doesn't work (copy)
+	UVector2i.rotate90DegCCW(arr[0]); //works
+	for vec in arr do
+		writeln(vec.x, ', ', vec.y);
 end.

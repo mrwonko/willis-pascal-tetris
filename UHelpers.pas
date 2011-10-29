@@ -11,7 +11,12 @@
 unit UHelpers;
 
 interface
-	uses UVector2i;
+	uses UVector2i, UGeneralTypes;
+	
+	const
+		//how wide the borders are - changing this does not change the
+		//borders, it just messes calculations up.
+		BORDER_SIZE : integer = 1;
 
 	(*
 	 * @brief draws 4 borders, creating a rectangle
@@ -25,6 +30,11 @@ interface
 	 * @brief Returns one of the colors defined in UGameplayConstants
 	 *)
 	function getRandomTetrominoColor() : byte;
+	
+	(*
+	 * @brief Returns one of the shapes defined in UGameplayConstants
+	 *)
+	function getRandomTetrominoShape() : TTetrominoShape;
 	
 	(* @brief Swaps the content of a and b *)
 	procedure swap(var a, b : integer);
@@ -84,6 +94,17 @@ implementation
 		getRandomTetrominoColor := TETROMINO_COLORS[
 			low(TETROMINO_COLORS) + 
 			random(high(TETROMINO_COLORS) - low(TETROMINO_COLORS) + 1)
+		];
+	end;
+	
+	function getRandomTetrominoShape() : TTetrominoShape;
+	begin
+		//random(i) returns a random number in range [0, i[
+		//I want one in range [low, high]
+		//so I add low to random(high-low+1)
+		getRandomTetrominoShape := TETROMINO_SHAPES[
+			low(TETROMINO_SHAPES) + 
+			random(high(TETROMINO_SHAPES) - low(TETROMINO_SHAPES) + 1)
 		];
 	end;
 	
