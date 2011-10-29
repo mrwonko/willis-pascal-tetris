@@ -51,7 +51,7 @@ implementation
 
 	uses
 		math, //for max()
-		UGeneralConstants, //screen size
+		UDisplayConstants, //screen size
 		crt; //screen clearing
 
 	procedure init(var self : TMenu; headerLines, bodyLines : array of

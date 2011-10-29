@@ -28,7 +28,7 @@ uses
 	UIngame,
 	UGameOver,
 	//contains screen size constants
-	UGeneralConstants,
+	UDisplayConstants,
 	//for console i/o
 	crt;
 

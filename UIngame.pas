@@ -29,11 +29,12 @@ implementation
 		UTetromino, //TTetromino
 		UVector2i, //TVector2i
 		UGameplayConstants, //gamefield size
-		UGeneralConstants, //screen size
+		UDisplayConstants, //screen size
 		crt, //display stuff
 		math, //max()
 		UHelpers, //border drawing
-		UKeyConstants; //codes of the keys (e.g. arrow keys)
+		UKeyConstants, //codes of the keys (e.g. arrow keys)
+		UTime; //time handling
 	
 	const
 		//Maximum score that can be displayed - any longer number would
@@ -67,9 +68,17 @@ implementation
 		score : integer = 0;
 		//player's current level
 		level : integer = 1;
+		//rows the player still has to remove to advance a level
+		rowsToNextLevel : integer;
+		//the time the last frame took place
+		lastFrameTime : longint;
+		//time until the current tetromino falls another block down
+		timeToNextDrop : integer;
+		//interval between tetromino drops (i.e. move 1 cell down),
+		//decreases over time.
+		dropTime : integer;
 		
-		(* @brief Initializes everything that needs initializing
-		 *)
+		(* @brief Initializes everything that needs initializing *)
 		procedure init();
 		begin
 			//calculate gamefield position
@@ -103,10 +112,15 @@ implementation
 			UGamefield.init(gamefield, gamefieldPosition);
 			UTetromino.init(currentTetromino);
 			UTetromino.init(nextTetromino);
+			
+			lastFrameTime := UTime.getMillisecondsSinceMidnight();
+			rowsToNextLevel := UGameplayConstants.ROWS_PER_LEVEL;
+			dropTime := UGameplayConstants.TETROMINO_BASE_DROP_TIME;
+			timeToNextDrop := dropTime;
 		end;
 		
-		(* @brief Draws the content that doesn't change - the borders.
-		 *)
+		(* @brief Draws the content that doesn't change - the borders,
+		 *        above all. *)
 		procedure drawStaticContent();
 		begin
 			//set color to white - better safe than sorry
@@ -130,6 +144,8 @@ implementation
 			write(LEVEL_STRING);
 		end;
 		
+		(* @brief Updates the displayed next Tetromino, should be called
+		 *        when it changes. *)
 		procedure updateTetrominoPreview();
 			procedure clearPreview();
 			var
@@ -171,6 +187,8 @@ implementation
 			drawPreview();
 		end;
 		
+		(* @brief Updates the displayed current score, should be called
+		 *        when it changes. *)
 		procedure updateScoreDisplay();
 		begin
 			//no clearing necessary since score only gets higher, thus
@@ -181,6 +199,8 @@ implementation
 			write(score);
 		end;
 		
+		(* @brief Updates the displayed current level, should be called
+		 *        when it changes. *)
 		procedure updateLevelDisplay();
 		begin
 			//no clearing necessary since level only gets higher, thus
@@ -189,6 +209,136 @@ implementation
 			gotoxy(infoboxPosition.x + length(LEVEL_STRING),
 				infoboxPosition.y + 1);
 			write(level);
+		end;
+		
+		(* @brief Called when 1 or more rows have been deleted.
+		 *        Calculates & applies score & level changes and other
+		 *        consequences.
+		 *)
+		procedure onRowsDeleted(numRows : integer);
+		begin
+			//TODO
+		end;
+		
+		(* @brief Called, when the current Tetromino has been moved.
+		 *        Checks whether it's hit the floor and handles that. *)
+		procedure onTetrominoMoved();
+		begin
+			//TODO
+		end;
+		
+		(* @brief Moves the current Tetromino, clears its old position
+		 *        and redraws it at the new one. Checks whether any more
+		 *        actions need to be taken. *)
+		procedure moveCurrentTetromino(amount : TVector2i);
+		begin
+			UTetromino.clearWithOffset(currentTetromino,
+				gamefieldPosition);
+			UTetromino.move(currentTetromino, amount);
+			UTetromino.drawWithOffset(currentTetromino,
+				gamefieldPosition);
+			onTetrominoMoved();
+		end;
+		
+		(* @brief Rotates the current Tetromino, clears its old position
+		 *        and redraws it at the new one. Checks whether any more
+		 *        actions need to be taken. *)
+		procedure rotateCurrentTetromino();
+		begin
+			UTetromino.clearWithOffset(currentTetromino,
+				gamefieldPosition);
+			UTetromino.rotate90DegCCW(currentTetromino);
+			UTetromino.drawWithOffset(currentTetromino,
+				gamefieldPosition);
+			onTetrominoMoved();
+		end;
+		
+		(* @brief Tries to move the falling tetromino 'amount' to the
+		 *        right
+		 *)
+		procedure tryHorizontalTetrominoMove(amount : integer);
+		var
+			temp : TTetromino;
+		begin
+			//move a copy and see if that worked
+			temp := currentTetromino;
+			UTetromino.move(temp, UVector2i.new(amount, 0));
+			if UGamefield.doesTetrominoFit(gamefield, temp) then
+			begin
+				//it worked, so let's do it.
+				moveCurrentTetromino(UVector2i.new(amount, 0));
+			end;
+			//if it didn't work, ignore.
+		end;
+		
+		(* @brief Tries to rotate the falling tetromino 90 degrees ccw
+		 *)
+		procedure tryTetrominoRotation();
+		var
+			temp : TTetromino;
+		begin
+			//rotate a copy and see if that worked
+			temp := currentTetromino;
+			UTetromino.rotate90DegCCW(temp);
+			if UGamefield.doesTetrominoFit(gamefield, temp) then
+			begin
+				//it worked, so let's do it.
+				rotateCurrentTetromino();
+			end;
+			//if it didn't work, ignore.
+		end;
+		
+		(* @brief Reads the pressed keys and handles them, i.e. calls
+		 *        the correct procedures etc.
+		 *)
+		procedure processInput();
+		var
+			key : char;
+		begin
+			while keyPressed() do
+			begin
+				key := crt.readKey();
+				//actually, all keys of interest to me are extended,
+				//i.e. readKey returns #0 first and then the code.
+				if key = #0 then
+				begin
+					//so we need to read again
+					key := readKey();
+					case key of
+						//move left
+						EXT_KEY_LEFT: tryHorizontalTetrominoMove(-1);
+						//move right
+						EXT_KEY_RIGHT: tryHorizontalTetrominoMove(1);
+						//rotate
+						EXT_KEY_UP: tryTetrominoRotation();
+						//Quit
+						EXT_KEY_ESCAPE: main := stateMainMenu;
+					end;
+				end;
+				
+			end;
+		end;
+		
+		procedure advanceGame();
+		var
+			frameTime, deltaT : longint;
+		begin
+			frameTime := UTime.getMillisecondsSinceMidnight();
+			deltaT := UTime.getDifference(frameTime, lastFrameTime);
+			lastFrameTime := frameTime;
+			
+			timeToNextDrop := timeToNextDrop - deltaT;
+			//is it time to drop the tetromino further?
+			//since this may happen multiple times (if deltaT is big),
+			//we need to check if the game's been lost, too.
+			while (timeToNextDrop <= 0) and (main = stateIngame) do
+			begin
+				//yes! Drop the Tetromino.
+				moveCurrentTetromino(UVector2i.new(0, 1));
+				//set the time to the next drop.
+				//(do it after moving since drop time might've chagned)
+				timeToNextDrop := timeToNextDrop + dropTime;
+			end;
 		end;
 		
 	begin
@@ -205,6 +355,8 @@ implementation
 		updateTetrominoPreview();
 		updateScoreDisplay();
 		updateLevelDisplay();
+		//draw the first tetrominon
+		UTetromino.drawWithOffset(currentTetromino, gamefieldPosition);
 		
 		main := stateIngame;
 		while main = stateIngame do

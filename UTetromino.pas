@@ -36,6 +36,10 @@ interface
 	 *)
 	procedure move(var self : TTetromino; offset : TVector2i);
 	
+	(* @brief Rotates the Tetromino 90 degrees counterclockwise
+	 *)
+	procedure rotate90DegCCW(var self : TTetromino);
+	
 	(* @brief Returns the rows this Tetromino occupies.
 	 *)
 	function getOccupiedRows(var self : TTetromino) : TRowIndexSet;
@@ -53,11 +57,19 @@ interface
 	 *       offset is the gamefield's absolute position
 	 *)
 	procedure drawWithOffset(var self: TTetromino; offset : TVector2i);
+	
+	(* @brief Clears the Tetromino's current position with offset.
+	 * 
+	 * @note Used to clear the currently falling Tetromino, in which
+	 *       case offset is the gamefield's absolute position
+	 *)
+	procedure clearWithOffset(var self: TTetromino; offset : TVector2i);
 
 implementation
 
 	uses
 		UGameplayConstants, //gamefield size
+		UDisplayConstants, //gamefield size
 		UHelpers, //Random Color & Shape generation
 		crt;
 	
@@ -96,6 +108,16 @@ implementation
 		self.position := self.position + offset;
 	end;
 	
+	procedure rotate90DegCCW(var self : TTetromino);
+	var
+		i : integer;
+	begin
+		for i := low(self.shape) to high(self.shape) do
+		begin
+			UVector2i.rotate90DegCCW(self.shape[i]);
+		end;
+	end;
+	
 	function getOccupiedRows(var self : TTetromino) : TRowIndexSet;
 	var
 		pos : TVector2i;
@@ -128,6 +150,18 @@ implementation
 	procedure drawWithOffset(var self: TTetromino; offset : TVector2i);
 	begin
 		drawIgnoringPosition(self, self.position + offset);
+	end;
+	
+	procedure clearWithOffset(var self: TTetromino; offset : TVector2i);
+	var
+		curPos : TVector2i;
+	begin
+		for curPos in self.shape do
+		begin
+			curPos := curPos + offset + self.position;
+			gotoxy(curPos.x, curPos.y);
+			write(CELL_EMPTY_CHAR);
+		end;
 	end;
 	
 	

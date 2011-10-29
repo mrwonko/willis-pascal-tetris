@@ -44,6 +44,12 @@ interface
 	function doesTetrominoFit(var self : TGamefield; tet : TTetromino) :
 		boolean;
 	
+	(* @brief Returns whether the given Tetromino touches the floor
+	 *        (i.e. dropped Tetrominos or the actual bottom)
+	 *)
+	function doesTetrominoTouchFloor(var self : TGamefield;
+		tet : TTetromino) : boolean;
+	
 	(* @brief Places the given Tetromino in the Gamefield and draws it.
 	 * 
 	 * @note It is assumed that the Tetromino fits, i.e. indices aren't
@@ -55,7 +61,8 @@ interface
 implementation
 
 	uses
-		crt; //display
+		crt, //drawing
+		UDisplayConstants; //Tetromino display
 
 
 	procedure init(var self : TGamefield; offset : TVector2i);
@@ -182,6 +189,18 @@ implementation
 		end;
 	end;
 	
+	function doesTetrominoTouchFloor(var self : TGamefield;
+		tet : TTetromino) : boolean;
+	var
+		temp : TTetromino;
+	begin
+		//copy tetromino
+		temp := tet;
+		//move it down
+		temp.position.y := temp.position.y + 1;
+		//if it doesn't fit there, there must be floor.
+		doesTetrominoTouchFloor := not doesTetrominoFit(self, temp);
+	end;
 	
 	procedure placeTetromino(var self : TGamefield; tet : TTetromino);
 	var
