@@ -75,7 +75,7 @@ implementation
 	
 	procedure init(var self : TTetromino);
 	var
-		minY : integer = -1;
+		minY : integer = 9999; //no shape should be this tall
 		pos : TVector2i;
 	begin
 		//choose a random color
@@ -83,7 +83,7 @@ implementation
 		//choose a random shape
 		self.shape := getRandomTetrominoShape();
 		for pos in self.shape do
-			if (pos.y < minY) or (minY = -1) then
+			if (pos.y < minY) then
 				minY := pos.y;
 		//set Y position so the highest part is at 0.
 		self.position.y := - minY;
@@ -128,7 +128,8 @@ implementation
 		//or order, values in sets are unique & ordered (order doesn't
 		//matter anyway...)
 		for pos in self.shape do
-			getOccupiedRows := getOccupiedRows + [pos.y];
+			getOccupiedRows := getOccupiedRows +
+				[pos.y + self.position.y];
 	end;
 	
 	

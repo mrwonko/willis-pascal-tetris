@@ -19,7 +19,9 @@ interface
 		EXT_KEY_LEFT = #75;
 		EXT_KEY_RIGHT = #77;
 		(* Escape *)
-		EXT_KEY_ESCAPE = #27;
+		KEY_ESCAPE = #27;
+		(* Return *)
+		KEY_RETURN = #13;
 
 implementation
 

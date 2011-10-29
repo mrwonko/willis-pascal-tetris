@@ -26,6 +26,7 @@ implementation
 
 	uses
 		UGamefield, //TGamefield
+		UGamefieldRow, //TGamefieldRow - I need the isFull check.
 		UTetromino, //TTetromino
 		UVector2i, //TVector2i
 		UGameplayConstants, //gamefield size
@@ -216,15 +217,112 @@ implementation
 		 *        consequences.
 		 *)
 		procedure onRowsDeleted(numRows : integer);
+		var
+			//by how much the score will increase
+			deltaScore,
+			i : integer;
 		begin
-			//TODO
+			//increase level first, if necessary, so the player gets
+			//maximum points
+			rowsToNextLevel := rowsToNextLevel - numRows;
+			while rowsToNextLevel < 0 do
+			begin
+				//increase level
+				level := level + 1;
+				//update level display
+				updateLevelDisplay();
+				
+				//increase drop speed
+				dropTime := math.max(TETROMINO_MIN_DROP_TIME,
+					round(dropTime * TETROMINO_DROP_TIME_FACTOR));
+				
+				//reset row counter
+				rowsToNextLevel := rowsToNextLevel + ROWS_PER_LEVEL;
+			end;
+			//base score: c * numRows
+			deltaScore := UGameplayConstants.SCORE_PER_ROW * numRows;
+			//extra score for each row > 1
+			for i := 2 to numRows do
+			begin
+				deltaScore := round(deltaScore*SCORE_ROW_MULTIPLIER);
+			end;
+			//extra score for each level > 1
+			for i := 2 to level do
+			begin
+				deltaScore := round(deltaScore*SCORE_LEVEL_MULTIPLIER);
+			end;
+			//add additional score
+			score := score + deltaScore;
+			//update display
+			updateScoreDisplay();
 		end;
 		
 		(* @brief Called, when the current Tetromino has been moved.
 		 *        Checks whether it's hit the floor and handles that. *)
 		procedure onTetrominoMoved();
+		var
+			affectedRows : TRowIndexSet;
+			procedure removeFullRows();
+			var
+				curRowIndex, numDeletedRows : integer;
+			begin
+				//check if any of the affected rows are now full.
+				//since sets are ordered the check is from low to high,
+				//i.e. top to bottom, thus the remaining indices stay
+				//correct when we delete a row.
+				numDeletedRows := 0;
+				for curRowIndex in affectedRows do
+				begin
+					//is this row now full?
+					if UGamefieldRow.isFull(gamefield.rows[curRowIndex])
+						then
+						begin
+							//delete it and increase count
+							UGamefield.removeRow(gamefield,
+								curRowIndex);
+							numDeletedRows := numDeletedRows + 1;
+						end;
+				end;
+				//if any rows were deleted, award the score accordingly.
+				if numDeletedRows > 0 then
+				begin
+					onRowsDeleted(numDeletedRows);
+				end;
+			end;
 		begin
-			//TODO
+			//have we hit the floor?
+			if UGamefield.doesTetrominoTouchFloor(gamefield,
+				currentTetromino) then
+			begin
+				//put it into the gamefield
+				UGamefield.placeTetromino(gamefield, currentTetromino);
+				//save the rows that were affected
+				affectedRows := UTetromino.getOccupiedRows(
+					currentTetromino);
+				//make next tetromino current and create a new next
+				currentTetromino := nextTetromino;
+				UTetromino.init(nextTetromino);
+				//update display for next tetromino
+				updateTetrominoPreview();
+				
+				removeFullRows();
+				
+				//draw the new current Tetromino
+				UTetromino.drawWithOffset(currentTetromino,
+					gamefieldPosition);
+				//does it not fit? GAME OVER!
+				if not UGamefield.doesTetrominoFit(gamefield,
+					currentTetromino) then
+				begin
+					main := stateGameOver;
+				end
+				else
+				begin
+					//Tetromino might start touching the floor, so let's
+					//do another check.
+					onTetrominoMoved();
+				end;
+			end;
 		end;
 		
 		(* @brief Moves the current Tetromino, clears its old position
@@ -238,6 +336,8 @@ implementation
 			UTetromino.drawWithOffset(currentTetromino,
 				gamefieldPosition);
 			onTetrominoMoved();
+			//move cursor back to 1, 1 where the user shouldn't mind it
+			gotoxy(1, 1);
 		end;
 		
 		(* @brief Rotates the current Tetromino, clears its old position
@@ -251,6 +351,8 @@ implementation
 			UTetromino.drawWithOffset(currentTetromino,
 				gamefieldPosition);
 			onTetrominoMoved();
+			//move cursor back to 1, 1 where the user shouldn't mind it
+			gotoxy(1, 1);
 		end;
 		
 		(* @brief Tries to move the falling tetromino 'amount' to the
@@ -298,22 +400,31 @@ implementation
 			while keyPressed() do
 			begin
 				key := crt.readKey();
-				//actually, all keys of interest to me are extended,
-				//i.e. readKey returns #0 first and then the code.
-				if key = #0 then
-				begin
-					//so we need to read again
-					key := readKey();
-					case key of
-						//move left
-						EXT_KEY_LEFT: tryHorizontalTetrominoMove(-1);
-						//move right
-						EXT_KEY_RIGHT: tryHorizontalTetrominoMove(1);
-						//rotate
-						EXT_KEY_UP: tryTetrominoRotation();
-						//Quit
-						EXT_KEY_ESCAPE: main := stateMainMenu;
+				case key of
+				//extended key
+					#0:
+					begin
+						//so we need to read again
+						key := readKey();
+						case key of
+							//move left
+							EXT_KEY_LEFT:
+								tryHorizontalTetrominoMove(-1);
+							//move right
+							EXT_KEY_RIGHT:
+								tryHorizontalTetrominoMove(1);
+							//move down
+							EXT_KEY_DOWN:
+								moveCurrentTetromino(
+									UVector2i.new(0, 1));
+							//rotate
+							EXT_KEY_UP:
+								tryTetrominoRotation();
+						end;
 					end;
+				//Quit
+				KEY_ESCAPE:
+					main := stateMainMenu;
 				end;
 				
 			end;
@@ -357,6 +468,8 @@ implementation
 		updateLevelDisplay();
 		//draw the first tetrominon
 		UTetromino.drawWithOffset(currentTetromino, gamefieldPosition);
+		//move cursor back to 1, 1 where the user shouldn't mind it
+		gotoxy(1, 1);
 		
 		main := stateIngame;
 		while main = stateIngame do
@@ -364,6 +477,10 @@ implementation
 			processInput();
 			advanceGame();
 		end;
+		
+		//save score and level for Game Over screen
+		sharedData.lastScore := score;
+		sharedData.lastLevel := level;
 	end;
 	
 	begin

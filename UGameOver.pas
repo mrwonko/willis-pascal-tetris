@@ -24,7 +24,7 @@ interface
 	
 implementation
 
-	uses UMenu, UMenuLine, crt, math;
+	uses UMenu, UMenuLine, crt, math, UKeyConstants;
 	
 	function main(var sharedData : TSharedData) : TGameState;
 	var
@@ -39,7 +39,7 @@ implementation
 			(text: '<score>'; centered : true),
 			(text: '<level>'; centered : true),
 			(text: ''; centered : false),
-			(text: 'Press any key to continue.'; centered : false)
+			(text: 'Press enter or escape.'; centered : false)
 		);
 	begin
 		//dynamically fill score and level
@@ -61,11 +61,15 @@ implementation
 			//was a key pressed?
 			if keyPressed() then
 			begin
-				//if it was the 0, we need to read another time.
-				if readKey() = #0 then
+				//which one?
+				case readKey() of
+				#0:
+					//if it was the 0, we need to read another time.
 					readKey();
-				//in any case we go to the main menu.
-				main := stateMainMenu;
+				KEY_ESCAPE, KEY_RETURN:
+					//in that case we go to the main menu.
+					main := stateMainMenu;
+				end;
 			end;
 			//wait a little so we don't use the cpu unecessarily
 			delay(5); //in ms

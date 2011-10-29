@@ -29,20 +29,20 @@ interface
 	(* @brief Checks whether a given row is full (i.e. filled from left
 	 *        to right)
 	 *)
-	function isRowFull(var self : TGamefieldRow) : boolean;
+	function isFull(var self : TGamefieldRow) : boolean;
 
 implementation
 
-	function isRowFull(var self : TGamefieldRow) : boolean;
+	function isFull(var self : TGamefieldRow) : boolean;
 	var
 		currentCell : TGamefieldCell;
 	begin
 		//the row is full unless at least one cell is empty.
-		isRowFull := true;
+		isFull := true;
 		//so I test all cells...
 		for currentCell in self.cells do
 			if not currentCell.occupied then
-				isRowFull := false;
+				isFull := false;
 				//a break would be nice here, but since that's not
 				//available I sacrifice speed for code clarity here.
 				//(The alternative approach would be more obscure)

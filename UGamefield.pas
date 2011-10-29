@@ -120,12 +120,13 @@ implementation
 				   //not the same occupied state as before
 				if (oldCell.occupied <> newCell.occupied) or
 				   //or the color changed in an occupied cell
-				   ((oldCell.color <> newCell.color) and oldCell.occupied)
+				   ((oldCell.color <> newCell.color) and
+				    oldCell.occupied)
 				   then
 				begin
 					//rows/cells start at 0, screen coordinates at 1
-					gotoxy(self.offset.x + curRowIndex + 1, 
-						self.offset.y + curCellIndex + 1);
+					gotoxy(self.offset.x + curCellIndex, 
+						self.offset.y + curRowIndex);
 					
 					if newCell.occupied then
 					begin
@@ -218,7 +219,7 @@ implementation
 			self.rows[pos.y].cells[pos.x].occupied := true;
 			self.rows[pos.y].cells[pos.x].color := tet.color;
 			//draw it
-			gotoxy(self.offset.x+ pos.x + 1, self.offset.y + pos.y + 1);
+			gotoxy(self.offset.x+ pos.x, self.offset.y + pos.y);
 			write(CELL_OCCUPIED_CHAR);
 		end;
 	end;

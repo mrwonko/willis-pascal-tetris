@@ -7,15 +7,14 @@
  * Contains various tests.
  *)
 
-uses crt, UVector2i;
+uses crt;
 
 var
-	arr : array[0..0] of TVector2i = ((x:1;y:1));
-	vec : TVector2i;
+	key : char;
 begin
-	for vec in arr do
-		UVector2i.rotate90DegCCW(vec); //doesn't work (copy)
-	UVector2i.rotate90DegCCW(arr[0]); //works
-	for vec in arr do
-		writeln(vec.x, ', ', vec.y);
+	key := readkey();
+	if key = #0 then
+		writeln('ext key ',ord(key))
+	else
+		writeln('key ',ord(key))
 end.

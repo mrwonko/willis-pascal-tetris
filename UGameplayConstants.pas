@@ -54,19 +54,19 @@ const
 	
 	
 	//time a tetromino initially needs to drop one step (in ms)
-	TETROMINO_BASE_DROP_TIME = 1000;
+	TETROMINO_BASE_DROP_TIME : integer = 1000;
 	//factor by which the drop time is multiplied every level
-	TETROMINO_DROP_TIME_FACTOR = 0.8;
-	//minimum drop time
-	TETROMINO_DROP_TIME_MINIMUM = 1;
+	TETROMINO_DROP_TIME_FACTOR : real = 0.8;
+	//minimum drop time (0 might cause infinite loops)
+	TETROMINO_MIN_DROP_TIME : integer = 1;
 	//score you get per complete row
-	SCORE_PER_ROW = 10;
+	SCORE_PER_ROW : integer = 10;
 	//bonus score multiplier applied for every row > 1
-	SCORE_ROW_MULTIPLIER = 1.5;
+	SCORE_ROW_MULTIPLIER : real = 1.5;
 	//bonus score multiplier applied for every level > 1
-	SCORE_LEVEL_MULTIPLIER = 1.2;
+	SCORE_LEVEL_MULTIPLIER : real = 1.2;
 	//Rows that need to be removed to advance to the next level
-	ROWS_PER_LEVEL = 10;
+	ROWS_PER_LEVEL : integer = 10;
 
 implementation
 	begin
