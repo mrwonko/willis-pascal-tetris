@@ -4,7 +4,8 @@
  *
  * Tetris Program
  *
- * Contains the "main function" of the Tetris game.
+ * Contains the "main function" of the Tetris game. Which is a simple
+ * console based Tetris.
  * 
  * @note I could've used crt.window a couple of times, which effectively
  *       makes me draw only to a certain part of the console. However
@@ -50,18 +51,17 @@ begin
 
 			(* Quit has no function, of course, it just exits the loop.
 			 * I just catch it here so it won't enter the else block
-			 * which is supposed to catch invalid values. *)
+			 * which is supposed to catch invalid values. (Which
+			 * shouldn't happen anyway, but better safe than sorry.) *)
 			stateQuit: (* nothing *);
 
-			(* Main Menu State - displays the main menu, waits for
-			 * input and sets the new state accordingly. *)
+			(* Main Menu State *)
 			stateMainMenu:
 			begin
 				currentState := UMainMenu.main(sharedData);
 			end;
 
-			(* Game State - handles all the actual gameplay including
-			 * the game over screen. *)
+			(* Game State - handles all the actual gameplay. *)
 			stateIngame:
 			begin
 				currentState := UIngame.main(sharedData);
