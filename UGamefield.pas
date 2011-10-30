@@ -20,9 +20,7 @@ interface
 	type
 		
 		TGamefield = record
-			//19 = GAMEFIELD_HEIGHT - 1
-			//cannot be set from expression, again :(
-			rows : array[0..19] of TGamefieldRow;
+			rows : array[0..(GAMEFIELD_HEIGHT - 1)] of TGamefieldRow;
 			//offset of the gamefield on the screen
 			offset : TVector2i;
 		end;

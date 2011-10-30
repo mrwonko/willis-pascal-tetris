@@ -10,7 +10,7 @@
 unit UGameplayConstants;
 
 interface
-uses crt, UGeneralTypes;
+uses crt, UTetrominoShape;
 
 const
 	(* @brief Possible Tetromino colors
@@ -42,15 +42,13 @@ const
 	);
 	
 	//keep in sync with shape definitions above
-	TETROMINO_MIN_X : integer = -1;
-	TETROMINO_MIN_Y : integer = -2;
-	TETROMINO_MAX_X : integer = 1;
-	TETROMINO_MAX_Y : integer = 1;
+	TETROMINO_MIN_X = -1;
+	TETROMINO_MIN_Y = -2;
+	TETROMINO_MAX_X = 1;
+	TETROMINO_MAX_Y = 1;
 	
-	//keep in sync with UGamefield.TGamefield.cells
-	GAMEFIELD_WIDTH : integer = 10;
-	//keep in sync with UGeneralTypes.TRowIndices & see above!
-	GAMEFIELD_HEIGHT : integer = 20;
+	GAMEFIELD_WIDTH = 10;
+	GAMEFIELD_HEIGHT = 20;
 	
 	
 	//time a tetromino initially needs to drop one step (in ms)

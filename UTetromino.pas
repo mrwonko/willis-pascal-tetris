@@ -12,7 +12,8 @@ unit UTetromino;
 interface
 	uses
 		UVector2i, //vectors, obviously
-		UGeneralTypes; //TTetrominoShape
+		UTetrominoShape, //TTetrominoShape
+		UGeneralTypes; //TRowIndexSet
 	
 	type
 		TTetromino = record

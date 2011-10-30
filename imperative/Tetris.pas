@@ -17,6 +17,7 @@ begin
 	showMainMenu();
 	while running do
 	begin
+		//wait for input and save it
 		key := readKey();
 		case key of
 			//extended key? we need to read again.
@@ -44,6 +45,7 @@ begin
 			//Quit game pressed?
 			QUIT_KEY:
 			begin
+				//break loop.
 				running := false;
 			end;
 		end;

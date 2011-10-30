@@ -12,7 +12,7 @@ unit UGeneralTypes;
 
 interface
 
-	uses UVector2i;
+	uses UGameplayConstants;
 
 	type
 		(* The score reached, e.g. the current score ingame or a
@@ -29,14 +29,8 @@ interface
 		TGameState = (stateMainMenu, stateIngame, stateGameOver,
 					  stateQuit);
 		
-		(* The shape of a Tetromino. By definition they are made out of
-		 * 4 parts, hence the 4 element array. *)
-		TTetrominoShape = array[0..3] of TVector2i;
-		
 		(* The indices of the rows occupied by a Tetromino *)
-		//19 is GAMEFIELD_HEIGHT - 1, but sets cannot be based on
-		//expressions
-		TRowIndexSet = set of 0..19;
+		TRowIndexSet = set of 0..(GAMEFIELD_HEIGHT - 1);
 
 implementation
 	begin

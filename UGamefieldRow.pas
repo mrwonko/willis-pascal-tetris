@@ -13,6 +13,7 @@
 unit UGamefieldRow;
 
 interface
+	uses UGameplayConstants;
 
 	type
 		TGamefieldCell = record
@@ -21,9 +22,7 @@ interface
 		end;
 		
 		TGamefieldRow = record
-			//9 = GAMEFIELD_WIDTH - 1
-			//cannot be set from expression...
-			cells : array[0..9] of TGamefieldCell;
+			cells : array[0..(GAMEFIELD_WIDTH-1)] of TGamefieldCell;
 		end;
 	
 	(* @brief Checks whether a given row is full (i.e. filled from left

@@ -40,12 +40,12 @@ implementation
 	const
 		//Maximum score that can be displayed - any longer number would
 		//not fit into the box
-		MAX_DISPLAY_SCORE = 99999;
+		MAX_DISPLAY_SCORE = 9999;
 		SCORE_STRING  = 'score: ';
 		MAX_DISPLAY_LEVEL = 999;
 		LEVEL_STRING = 'level: ';
-		//length of string (7) + maximum number of digits (5)
-		INFOBOX_WIDTH = 12;
+		//length of string (7) + maximum number of digits (4)
+		INFOBOX_WIDTH = 11;
 		//level and score - two lines.
 		INFOBOX_HEIGHT = 2;
 	
@@ -84,6 +84,16 @@ implementation
 			//we stop the game loop.
 			currentState : TGameState;
 		end;
+	
+	(* @brief Checks whether an integer will overflow through addition
+	 *)
+	function willSumOverflow(a, b : integer) : boolean;
+	var
+		sum : integer;
+	begin
+		sum := a + b;
+		willSumOverflow := (a > sum);
+	end;
 
 		
 	(* @brief Initializes everything that needs initializing *)
@@ -214,7 +224,7 @@ implementation
 		crt.textcolor(WHITE);
 		gotoxy(data.infoboxPosition.x + length(SCORE_STRING),
 			data.infoboxPosition.y);
-		write(data.score);
+		write(math.min(data.score, MAX_DISPLAY_SCORE));
 	end;
 	
 	(* @brief Updates the displayed current level, should be called
@@ -226,7 +236,7 @@ implementation
 		crt.textcolor(WHITE);
 		gotoxy(data.infoboxPosition.x + length(LEVEL_STRING),
 			data.infoboxPosition.y + 1);
-		write(data.level);
+		write(math.min(data.level, MAX_DISPLAY_LEVEL));
 	end;
 	
 	(* @brief Called when 1 or more rows have been deleted.
@@ -269,10 +279,14 @@ implementation
 		begin
 			deltaScore := round(deltaScore*SCORE_LEVEL_MULTIPLIER);
 		end;
-		//add additional score
-		data.score := data.score + deltaScore;
-		//update display
-		updateScoreDisplay(data);
+		//prevent overflow - who knows how long the player survives...
+		if not willSumOverflow(data.score, deltaScore) then
+		begin
+			//add additional score
+			data.score := data.score + deltaScore;
+			//update display
+			updateScoreDisplay(data);
+		end;
 	end;
 	
 	(* @brief Called, when the current Tetromino has been moved.

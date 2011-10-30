@@ -11,7 +11,7 @@
 unit UHelpers;
 
 interface
-	uses UVector2i, UGeneralTypes;
+	uses UVector2i, UTetrominoShape;
 	
 	const
 		//how wide the borders are - changing this does not change the
