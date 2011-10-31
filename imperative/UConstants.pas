@@ -111,7 +111,7 @@ interface
 		INFO_BOX_POS_X = PREVIEW_BOX_POS_X;
 		INFO_BOX_POS_Y = PREVIEW_BOX_POS_Y + PREVIEW_BOX_HEIGHT + 1;
 		INFO_BOX_HEIGHT = 2; //2 lines: score and level
-		INFO_BOX_WIDTH = 12; //there are 7 chars in 'score: ' and since score = 10*level and level 1333+ means 1ms block fall time, they certainly won't get over 13330 points (5 digits). 7+5=12
+		INFO_BOX_WIDTH = 12; //there are 7 chars in 'score: ' and since score = 10*(level-1) and level 1333+ means 1ms block fall time, they certainly won't get over 13320 points (5 digits). 7+5=12
 
 implementation
 

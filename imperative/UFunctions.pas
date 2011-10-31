@@ -340,7 +340,7 @@ implementation
 		resetConsoleState();
 	end;
 	
-	procedure removeFullRows(var gamefield : TGamefield);
+	procedure removeFullRows(var state : TGameState);
 	var
 		curRowIndex, i : integer;
 		
@@ -350,9 +350,9 @@ implementation
 		begin
 			isCurrentRowFull := true;
 			//when any cell is not occupied, the row's not full. duh.
-			for curCellIndex := low(gamefield[curRowIndex]) to high(gamefield[curRowIndex]) do
+			for curCellIndex := low(state.gamefield[curRowIndex]) to high(state.gamefield[curRowIndex]) do
 			begin
-				if not gamefield[curRowIndex][curCellIndex].occupied then
+				if not state.gamefield[curRowIndex][curCellIndex].occupied then
 				begin
 					isCurrentRowFull := false;
 				end;
@@ -360,23 +360,24 @@ implementation
 		end;
 	begin
 		//there's no down-counting for loop, I think. I do it myself.
-		curRowIndex := high(gamefield);
-		while curRowIndex >= low(gamefield) do
+		curRowIndex := high(state.gamefield);
+		while curRowIndex >= low(state.gamefield) do
 		begin
 			//if the row is full...
 			if isCurrentRowFull() then
 			begin
+				onRowRemoved(state);
 				//move all above down.
 				i := curRowIndex;
-				while i > low(gamefield) do
+				while i > low(state.gamefield) do
 				begin
-					gamefield[i] := gamefield[i-1];
+					state.gamefield[i] := state.gamefield[i-1];
 					i -= 1;
 				end;
 				//and empty the top one
-				for i := low(gamefield[low(gamefield)]) to high(gamefield[low(gamefield)]) do
+				for i := low(state.gamefield[low(state.gamefield)]) to high(state.gamefield[low(state.gamefield)]) do
 				begin
-					gamefield[low(gamefield)][i].occupied := false;
+					state.gamefield[low(state.gamefield)][i].occupied := false;
 				end;
 			end;
 			curRowIndex -= 1;
@@ -400,7 +401,7 @@ implementation
 				state.gamefield[pos.y][pos.x].color := state.currentTetromino.color;
 			end;
 			//remove filled rows
-			removeFullRows(state.gamefield);
+			removeFullRows(state);
 			//now we need a new tetromino.
 			state.currentTetromino := state.nextTetromino;
 			moveToTopCenter(state.currentTetromino);
