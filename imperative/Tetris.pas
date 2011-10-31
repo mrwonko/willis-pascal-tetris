@@ -13,6 +13,8 @@ var
 	running : boolean = true;
 	key : char;
 begin
+	//hide cursor
+	crt.cursorOff();
 	//initial menu display
 	showMainMenu();
 	while running do
@@ -50,4 +52,6 @@ begin
 			end;
 		end;
 	end;
+	//game done? let's leave a nice clean screen.
+	crt.clrscr();
 end.

@@ -14,7 +14,16 @@ interface
 			x, y : integer;
 		end;
 
+		(* @brief Vector additin *)
+	operator +(lhs, rhs : TVector2i) result : TVector2i;
+
 implementation
+
+	operator +(lhs, rhs : TVector2i) result : TVector2i;
+	begin
+		result.x := lhs.x + rhs.x;
+		result.y := lhs.y + rhs.y;
+	end;
 
 	begin
 	end.

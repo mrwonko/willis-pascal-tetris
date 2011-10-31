@@ -33,6 +33,9 @@ interface
 		//rotating the Tetromino
 		ROTATE_KEY = 'W';
 		ROTATE_KEY_ALT = 'w';
+		//speeding the Tetromino up
+		SPEED_KEY = 'S';
+		SPEED_KEY_ALT = 's';
 		//escape - for leaving
 		ESCAPE_KEY = #27;
 		
@@ -74,6 +77,9 @@ interface
 		TETROMINO_MAX_X = 1;
 		TETROMINO_MAX_Y = 1;
 		
+		//Character representing Tetrominoes
+		TETROMINO_CHAR = '#';
+		
 		//  UI Definitions, i.e. which window is where and how big.
 		//screen size, used for many calculations and for resetting the window.
 		SCREEN_WIDTH = 80;
@@ -85,6 +91,7 @@ interface
 		GAMEOVER_WINDOW_POS_X = round( (SCREEN_WIDTH - GAMEOVER_WINDOW_WIDTH) / 2);
 		GAMEOVER_WINDOW_POS_Y = round( (SCREEN_HEIGHT - GAMEOVER_WINDOW_HEIGHT) / 2);
 		GAMEOVER_TEXT = 'GAME OVER';
+		//position relative to window
 		GAMEOVER_TEXT_POS_X = 2;
 		GAMEOVER_TEXT_POS_Y = 2;
 		
@@ -97,8 +104,8 @@ interface
 		//tetromino preview box definitions
 		PREVIEW_BOX_POS_X  = GAMEFIELD_POS_X + GAMEFIELD_WIDTH + 1;
 		PREVIEW_BOX_POS_Y  = GAMEFIELD_POS_Y;
-		PREVIEW_BOX_WIDTH  = TETROMINO_MAX_X - TETROMINO_MIN_X;
-		PREVIEW_BOX_HEIGHT = TETROMINO_MAX_Y - TETROMINO_MIN_Y;
+		PREVIEW_BOX_WIDTH  = TETROMINO_MAX_X - TETROMINO_MIN_X + 1;
+		PREVIEW_BOX_HEIGHT = TETROMINO_MAX_Y - TETROMINO_MIN_Y + 1;
 		
 		//score/level info box definitions
 		INFO_BOX_POS_X = PREVIEW_BOX_POS_X;
